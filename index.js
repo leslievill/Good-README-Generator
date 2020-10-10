@@ -9,11 +9,7 @@ const questions = [
         name: "title",
         message: "What is your project title?"
     },
-    {
-        type: "input",
-        name: "badge",
-        message: "Please provide the badges links that you want"
-    },
+    
     {
         type: "input",
         name: "description",
@@ -30,9 +26,10 @@ const questions = [
         message: "Please provide the project usage"
     },
     {
-        type: "input",
-        name: "licence",
-        message: "Please provide the project licence or your badge link"
+        type: "list",
+        name: "license",
+        message: "Please select license",
+        choices:['MIT', 'none'],
     },
     {
         type: "input",
@@ -59,6 +56,9 @@ const questions = [
 inquirer
     .prompt(questions)
     .then(function(data){
+        if (data.license == 'MIT') {
+            data.license = "[![GitHub license](https://img.shields.io/github/license/Naereen/StrapDown.js.svg)](https://github.com/Naereen/StrapDown.js/blob/master/LICENSE)"
+       }
         const queryUrl = `https://api.github.com/users/${data.username}`;
 
         axios.get(queryUrl).then(function(res) {
@@ -70,19 +70,16 @@ inquirer
                 name: res.data.name
             };
             
-          fs.writeFile("README.md", generate(data, githubInfo), function(err) {
+            fs.writeFile("README.md", generate(data, githubInfo), function(err) {
             if (err) {
               throw err;
             };
     
-            console.log("New README file created successfully!");
+            console.log("New README file created with success!");
           });
         });
 
 });
 
-function init() {
 
-}
 
-init();
